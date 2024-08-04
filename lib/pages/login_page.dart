@@ -8,6 +8,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  GlobalKey<FormState> _loginFormKey = GlobalKey();
+  String? username, password;
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,15 +47,41 @@ class _LoginPageState extends State<LoginPage> {
       width: MediaQuery.sizeOf(context).width * 0.90,
       height: MediaQuery.sizeOf(context).height * 0.30,
       child: Form(
+        key: _loginFormKey,
           child: Column(
             mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
 
         children: [
-          TextFormField(decoration: InputDecoration(hintText: "Username"),),
+          TextFormField(
+            initialValue: "emilys",
+            onSaved: (value){
+              setState(() {
+                username = value;
+              });
+            },
+          validator: (value){
+            if(value == null ||value.isEmpty){
+              return "Enter a username";
+            }
+          },
+          decoration: InputDecoration(hintText: "Username"),),
 
-          TextFormField(decoration: InputDecoration(hintText: "Password"),),
+          TextFormField(
+            initialValue: "emilyspass",
+            onSaved: (value){
+              setState(() {
+                password = value;
+              });
+            },
+            obscureText: true,
+            validator: (value){
+              if(value == null ||value.length < 5){
+                return "Enter a valid password";
+              }
+            },
+            decoration: InputDecoration(hintText: "Password"),),
           _loginButton(),
         ],
       )),
@@ -61,7 +91,12 @@ class _LoginPageState extends State<LoginPage> {
  Widget _loginButton() {
     return SizedBox(
       width: MediaQuery.sizeOf(context).width * 0.60,
-      child: ElevatedButton(onPressed: (){}, child: const Text("Login"),),
+      child: ElevatedButton(onPressed: (){
+        if(_loginFormKey.currentState?.validate() ?? false){
+          _loginFormKey.currentState?.save();
+
+        }
+      }, child: const Text("Login"),),
     );
  }
 }
